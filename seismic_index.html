@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EarthGuard - Advanced Seismic Observatory</title>
+
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Roboto:wght@300;400;700&family=Orbitron:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Auth & Admin Logic -->
+    <script src="js/auth.js"></script>
+
+    <!-- Libraries CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff3300">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/seismic.css?v=2.2">
+</head>
+
+<body>
+    <!-- Start Overlay for Audio/Visual Init -->
+    <div id="startOverlay">
+        <!-- Initial Connect Screen -->
+        <div class="overlay-content" id="initScreen">
+            <h1
+                style="font-family:'Orbitron'; font-size:3rem; color:var(--magma); margin-bottom:10px; text-shadow:0 0 20px var(--magma)">
+                SEISMIC SYSTEM</h1>
+            <p style="color:#aaa; letter-spacing:1px; margin-bottom:40px;">INITIALIZING TECTONIC DATA STREAMS...</p>
+            <button class="system-btn" onclick="showRegionSelection()">CONNECT TO GRID</button>
+        </div>
+
+        <!-- Region Selection Screen (Hidden Initially) -->
+        <div id="regionSelect">
+            <h2 style="font-family:'Orbitron'; color:var(--magma); letter-spacing:2px; margin-bottom:10px;">SELECT
+                OBSERVED REGION</h2>
+            <p style="color:#888;">CHOOSE TARGET ZONE FOR INITIALIZATION</p>
+
+            <div class="region-grid">
+                <!-- Global -->
+                <div class="region-card" onclick="initSystem('global')">
+                    <i class="fa-solid fa-globe"></i>
+                    <h3>GLOBAL</h3>
+                    <p>Worldwide Monitoring</p>
+                </div>
+
+                <!-- Africa -->
+                <div class="region-card" onclick="initSystem('africa')">
+                    <i class="fa-solid fa-earth-africa"></i>
+                    <h3>AFRICA</h3>
+                    <p>Regional Focus</p>
+                </div>
+
+                <!-- Egypt -->
+                <div class="region-card" onclick="initSystem('egypt')">
+                    <i class="fa-solid fa-pyramid"></i> <!-- Using pyramid/landmark or just location dot -->
+                    <i class="fa-solid fa-location-dot" style="font-size:2rem; position:absolute; bottom:90px;"></i>
+                    <h3>EGYPT</h3>
+                    <p>Local Precision</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app" style="opacity:0; transition: opacity 2s ease;">
+        <!-- Header -->
+        <header>
+            <div class="brand">
+                <i class="fa-solid fa-shield-halved fa-beat"
+                    style="--fa-animation-duration: 3s; color: var(--magma);"></i>
+                <span>EARTHGUARD</span>
+            </div>
+
+            <div class="controls">
+                <div class="user-profile role-specific role-citizen role-student role-scientist" id="userProfileDisplay"
+                    style="display:none; cursor:pointer;" onclick="toggleUserDropdown()">
+                    <div class="profile-avatar" id="navAvatar">U</div>
+                    <span class="small" id="userNameDisplay">Guest</span>
+                    <!-- Dropdown -->
+                    <div id="userDropdown"
+                        style="display:none; position:absolute; top:50px; right:0; background:#111; border:1px solid var(--magma); padding:10px; border-radius:5px; z-index:100; min-width:150px;">
+                        <div onclick="window.location.href='admin.html'" id="adminLink"
+                            style="display:none; padding:8px; cursor:pointer; color:var(--magma);">Admin Panel</div>
+                        <div onclick="Auth.logout()" style="padding:8px; cursor:pointer; color:#fff;">Logout</div>
+                    </div>
+                </div>
+                <button class="btn primary" id="loginBtnNav" onclick="openLoginModal()" style="font-size:0.7rem;">LOGIN
+                    / JOIN</button>
+
+                <div class="theme-toggle">
+                    <button class="theme-btn active" title="Dark Mode"><i class="fa-solid fa-moon"></i></button>
+                    <button class="theme-btn" title="Light Mode"><i class="fa-solid fa-sun"></i></button>
+                </div>
+
+                <div class="language-toggle">
+                    <button class="lang-btn active">AR</button>
+                    <button class="lang-btn">EN</button>
+                    <button class="lang-btn">FR</button>
+                </div>
+
+                <div class="notif-badge" style="position:relative">
+                    <button class="btn" id="notifBtn" title="Notifications"><i class="fa-solid fa-bell"></i></button>
+                    <span id="notifCount"
+                        style="position:absolute; top:-5px; right:-5px; background:var(--danger); color:#fff; border-radius:50%; width:16px; height:16px; font-size:10px; display:flex; align-items:center; justify-content:center; display:none;">0</span>
+                </div>
+
+                <div class="music-control" style="margin: 0 10px;">
+                    <button class="btn" id="musicBtn" title="Toggle Music" onclick="toggleMusic()">
+                        <i class="fa-solid fa-music"></i>
+                    </button>
+                    <!-- YouTube Player Placeholder -->
+                    <div id="ytPlayer"
+                        style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; left: -9999px;">
+                    </div>
+                </div>
+                <button class="btn primary install-btn-neon" id="installBtn">
+                    <i class="fa-solid fa-download"></i>
+                    <span>DOWNLOAD NOW FOR WINDOWS</span>
+                </button>
+                <button class="btn" id="settingsBtn" title="Settings"><i class="fa-solid fa-gear"></i></button>
+                <button class="btn primary" id="refreshBtn"><i class="fa-solid fa-sync"></i> <span
+                        data-i18n="refresh">Refresh</span></button>
+                <div style="margin-left:10px; display:flex; gap:5px;">
+                    <button class="btn active-state-anim" title="EMERGENCY MODE" onclick="toggleEmergencyMode()"
+                        style="color:red; border-color:red;"><i class="fa-solid fa-triangle-exclamation"></i>
+                        SOS</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Left Panel: Lists & Filters -->
+        <aside class="panel">
+            <div class="head">
+                <span class="small" data-i18n="live_feed">Live Feed</span>
+                <div style="display:flex; gap:5px; align-items:center">
+                    <button class="btn small" id="todayToggle" title="Today Only (24h)"><i
+                            class="fa-solid fa-calendar-day"></i></button>
+                    <span class="small" id="lastUpdate" data-i18n="updating">Updating...</span>
+                </div>
+            </div>
+            <div class="body">
+                <div class="filters">
+                    <input type="text" id="searchLoc" data-i18n="search_loc" placeholder="Search location...">
+                    <select id="searchMag">
+                        <option value="0" data-i18n="all_mag">All magnitudes</option>
+                        <option value="2.5" data-i18n="mag_2_5">2.5+</option>
+                        <option value="4.5" data-i18n="mag_4_5">4.5+</option>
+                        <option value="6.0" data-i18n="mag_6_0">6.0+</option>
+                    </select>
+                </div>
+
+                <div class="filter-status" id="activeFilters" style="display:none">
+                    <div class="filter-tags"></div>
+                </div>
+
+                <div class="list" id="quakeList">
+                    <!-- Quake items injected here -->
+                    <div style="text-align:center; padding:20px; color:var(--muted)">
+                        <span class="loading"></span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center: Map/Globe -->
+        <main style="position:relative; background:#000; overflow:hidden">
+            <div class="map-top-controls">
+                <button class="btn view-toggle" data-view="2d" title="2D Map"><i class="fa-solid fa-map"></i>
+                    <span data-i18n="view_2d">2D</span></button>
+                <button class="btn view-toggle" data-view="3d" title="3D Globe"><i class="fa-solid fa-globe"></i>
+                    <span data-i18n="view_3d">3D</span></button>
+            </div>
+
+            <!-- 2D Map Container -->
+            <div id="mapWrap" style="width:100%; height:100%">
+                <div id="map"></div>
+                <div class="toast" id="toast"></div>
+            </div>
+
+            <!-- 3D Globe Container -->
+            <div id="globeWrap" style="width:100%; height:100%; display:none;">
+                <div id="globeContainer" style="width:100%; height:100%;"></div>
+            </div>
+        </main>
+
+        <!-- Right Panel: Analytics -->
+        <aside class="panel" id="rightPanel" style="overflow-y:auto;">
+            <div class="head">
+                <span data-i18n="analytics">Analytics</span>
+                <button class="btn small" onclick="window.exportToPDF()" data-i18n="export_pdf">Export PDF</button>
+            </div>
+
+            <div class="body" style="padding:15px;">
+                <!-- Control Bar -->
+                <div class="analytics-controls" style="display:flex; gap:10px; margin-bottom:15px;">
+                    <select id="analyticsCountry" class="glass-select"
+                        style="flex:1; background:rgba(0,0,0,0.5); border:1px solid #444; padding:5px; color:#fff;">
+                        <option value="all">🌍 Global</option>
+                    </select>
+                    <select id="analyticsPeriod" class="glass-select"
+                        style="width:100px; background:rgba(0,0,0,0.5); border:1px solid #444; padding:5px; color:#fff;">
+                        <option value="1">24h</option>
+                        <option value="7" selected>7 Days</option>
+                        <option value="30">30 Days</option>
+                    </select>
+                </div>
+
+                <!-- KPI Grid -->
+                <div class="analytics-grid"
+                    style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">
+                    <div class="stat-card"
+                        style="background:#222; padding:10px; border-radius:8px; border-left:3px solid var(--magma);">
+                        <small style="color:#888;">Seismic Risk</small>
+                        <h3 id="riskScoreVal" style="margin:5px 0; font-family:'Orbitron'">--</h3>
+                        <div class="progress-bar" style="height:4px; background:#444; width:100%;">
+                            <div id="riskBar" style="height:100%; background:var(--magma); width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card"
+                        style="background:#222; padding:10px; border-radius:8px; border-left:3px solid #ffcc00;">
+                        <small style="color:#888;">Energy (J)</small>
+                        <h3 id="energyVal" style="margin:5px 0; font-family:'Orbitron'; font-size:0.9rem;">--</h3>
+                    </div>
+                    <div class="stat-card" style="background:#222; padding:10px; border-radius:8px;">
+                        <small style="color:#888;">Total Count</small>
+                        <h3 id="totalCountVal" style="margin:5px 0;">0</h3>
+                    </div>
+                    <div class="stat-card" style="background:#222; padding:10px; border-radius:8px;">
+                        <small style="color:#888;">Max Mag</small>
+                        <h3 id="maxMagVal" style="margin:5px 0; color:var(--danger)">0</h3>
+                    </div>
+                </div>
+
+                <!-- Charts Area -->
+                <div class="chart-section" style="margin-bottom:20px;">
+                    <h4 style="font-size:0.8rem; color:#ccc; margin-bottom:10px;">Magnitude Dist.</h4>
+                    <canvas id="magChart" height="150" style="width:100%;"></canvas>
+                </div>
+
+                <div class="chart-section" style="margin-bottom:20px;">
+                    <h4 style="font-size:0.8rem; color:#ccc; margin-bottom:10px;">Depth Analysis (Km)</h4>
+                    <div style="height:150px; display:flex; justify-content:center;">
+                        <canvas id="depthChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-section" style="margin-bottom:20px;">
+                    <h4 style="font-size:0.8rem; color:#ccc; margin-bottom:10px;">Activity Trend</h4>
+                    <canvas id="trendChart" height="100" style="width:100%;"></canvas>
+                </div>
+
+                <!-- Advanced Metrics Text -->
+                <div class="metrics-list"
+                    style="margin-bottom:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:5px;">
+                    <h4 style="font-size:0.85rem; color:var(--primary);"><i class="fa-solid fa-fire"></i> Hotspots</h4>
+                    <ul id="hotspotsList"
+                        style="list-style:none; padding:0; margin:5px 0 0 0; font-size:0.8rem; color:#ddd;"></ul>
+                </div>
+
+                <div class="metrics-list" style="margin-bottom:15px;">
+                    <h4 style="font-size:0.85rem; color:#888;">Regional Signature</h4>
+                    <p id="signatureText" style="font-size:0.8rem; color:#666; font-style:italic;">--</p>
+                </div>
+            </div>
+            <div class="footer" style="padding:10px; border-top:1px solid var(--border)">
+                <div id="impactText" style="font-size:0.75rem; color:#555;">Select a specific country for impact
+                    analysis.</div>
+            </div>
+        </aside>
+
+        <!-- Footer -->
+        <footer>
+            <div class="small">EarthGuard Global Monitoring © Michael Nagy Riad Kamel - Egypt 2025</div>
+            <div class="performance-stats">
+                <span>Mem: <span id="perfMem">--</span></span>
+                <span>FPS: <span id="perfFps">--</span></span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals & Overlays -->
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+            <h3 data-i18n="notifications">Notifications</h3>
+            <button class="btn small" onclick="document.getElementById('notificationPanel').classList.remove('show')"><i
+                    class="fa-solid fa-times"></i></button>
+        </div>
+        <div class="notification-list" id="notificationList">
+            <!-- Notifications items -->
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h3 data-i18n="settings">Settings</h3>
+            <button class="btn small" onclick="document.getElementById('settingsPanel').classList.remove('show')"><i
+                    class="fa-solid fa-times"></i></button>
+        </div>
+        <div class="settings-content">
+            <!-- Appearance Section -->
+            <div class="settings-section">
+                <h4 data-i18n="appearance_settings">Visual & Interface</h4>
+                <div class="setting-item">
+                    <label data-i18n="theme">Theme Mode</label>
+                    <div class="toggle-group">
+                        <button class="toggle-btn active" onclick="STATE.setTheme('dark')"><i
+                                class="fa-solid fa-moon"></i> Dark</button>
+                        <button class="toggle-btn" onclick="STATE.setTheme('light')"><i class="fa-solid fa-sun"></i>
+                            Light</button>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label data-i18n="animations">Animations (Performance)</label>
+                    <label class="switch">
+                        <input type="checkbox" checked onchange="STATE.toggleAnimations(this.checked)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Data & Alerts Section -->
+            <div class="settings-section">
+                <h4 data-i18n="data_alerts">Data & Alerts</h4>
+                <div class="setting-item">
+                    <label data-i18n="sound_alerts">Sound Alerts</label>
+                    <label class="switch">
+                        <input type="checkbox" checked onchange="STATE.settings.soundAlerts=this.checked">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label data-i18n="alert_threshold">Alert Threshold (Mag)</label>
+                    <div class="range-wrap">
+                        <input type="range" min="3" max="8" step="0.5" value="5.5"
+                            oninput="document.getElementById('threshVal').innerText=this.value; STATE.settings.alertThreshold=this.value">
+                        <span id="threshVal">5.5</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label data-i18n="data_source">Data Source</label>
+                    <select onchange="STATE.setDataSource(this.value)">
+                        <option value="live">Live USGS (Real-time)</option>
+                        <option value="mock">Simulation (Demo)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Map Options -->
+            <div class="settings-section">
+                <h4 data-i18n="map_options">Map Configuration</h4>
+                <div class="setting-item">
+                    <label data-i18n="map_style">Map Style</label>
+                    <select onchange="STATE.setMapStyle(this.value)">
+                        <option value="dark">Tectonic Dark</option>
+                        <option value="sat">Satellite Imagery</option>
+                        <option value="light">Survey Light</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Chatbot -->
+    <div class="chat-assistant" id="chatAssistant">
+        <div class="chat-header">
+            <div style="display:flex;gap:10px;align-items:center">
+                <div class="avatar" style="background:var(--magma); color:#fff">EG</div>
+                <div>
+                    <div style="font-weight:bold">EarthGuard AI</div>
+                    <div style="font-size:0.7rem;color:var(--success)">Online Monitor</div>
+                </div>
+            </div>
+            <i class="fa-solid fa-times" style="cursor:pointer"
+                onclick="document.getElementById('chatAssistant').classList.remove('show')"></i>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message assistant">
+                مرحباً! أنا مساعد EarthGuard الذكي. كيف يمكنني مساعدتك في بيانات الزلازل اليوم؟
+            </div>
+        </div>
+        <div class="suggested-questions" id="suggestedQuestions">
+            <!-- Injected by chatbot.js -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" data-i18n="chat_placeholder" placeholder="Type a message...">
+            <button class="btn primary" id="chatSendBtn"><i class="fa-solid fa-paper-plane"></i></button>
+            <button class="btn" id="micBtn"><i class="fa-solid fa-microphone"></i></button>
+        </div>
+    </div>
+
+    <div class="chat-toggle-btn" onclick="document.getElementById('chatAssistant').classList.add('show')">
+        <i class="fa-solid fa-robot"></i>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Dependencies -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <!-- App Scripts -->
+    <script src="js/seismic-data.js?v=2.2"></script>
+    <script src="js/globe.js?v=2.2"></script>
+    <script src="js/report.js?v=2.2"></script>
+    <script src="js/chatbot.js?v=2.2"></script>
+    <script src="js/music.js?v=2.2"></script>
+    <script src="js/music.js?v=2.2"></script>
+    <script src="js/seismic-app.js?v=2.2"></script>
+    <script src="js/features.js"></script> <!-- Innovations -->
+
+    <script>
+        // Init AOS
+        AOS.init();
+
+        // Init Globe (if globe.js exposes an init, or just keep it loaded)
+        // Note: globe.js usually runs immediately or has its own setup.
+        // We will notify the user if adjustments are needed.
+
+        // PWA Installation & Service Worker Logic
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        // Always show button if on potential desktop, or rely on beforeinstallprompt
+        // Current CSS (.install-btn-neon) forces display:flex !important, so it is visible.
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (installBtn) installBtn.style.display = 'flex';
+        });
+
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('App was installed.');
+            if (installBtn) installBtn.style.display = 'none';
+            if (window.Utils && window.Utils.showToast) {
+                window.Utils.showToast("تم تثبيت EarthGuard بنجاح! يمكنك فتحه من سطح المكتب.");
+            }
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async (e) => {
+                // 1. Try Native PWA Install Prompt
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                    if (outcome === 'accepted') {
+                        installBtn.style.display = 'none';
+                        if (window.Utils && window.Utils.showToast) window.Utils.showToast("جاري تثبيت التطبيق...");
+                    }
+                    return;
+                }
+
+                // 2. Check if running in standalone (App Mode)
+                if (window.matchMedia('(display-mode: standalone)').matches) {
+                    if (window.Utils && window.Utils.showToast) window.Utils.showToast("التطبيق يعمل بالفعل في وضع الويندوز.");
+                    return;
+                }
+
+                // 3. Fallback: Download Launcher (.exe) & Instructions
+                // User wants it to "open from Windows". We can't auto-launch .exe, but we can download it.
+                if (window.Utils && window.Utils.showToast) {
+                    window.Utils.showToast("جاري تحميل EarthGuard للويندوز... يرجى فتح الملف بعد التحميل.");
+                } else {
+                    alert("جاري تحميل نسخة الويندوز. يرجى تشغيل الملف بعد التحميل.");
+                }
+
+                const a = document.createElement('a');
+                a.href = 'EarthGuard.exe';
+                a.download = 'EarthGuard.exe';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        }
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered', reg))
+                    .catch(err => console.error('Service Worker registration failed', err));
+            });
+        }
+    </script>
+    <!-- DETAIL MODAL -->
+    <!-- DETAIL MODAL -->
+    <div id="detailModal" class="tectonic-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">EARTHQUAKE DETAILS</h2>
+                <button class="close-btn" onclick="closeDetailModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalDescription" class="event-desc">
+                    <!-- Dynamic Content -->
+                </div>
+                <div class="modal-stats">
+                    <div class="stat-box">
+                        <i class="fas fa-ruler-vertical"></i>
+                        <span id="detailMag">0.0</span>
+                        <label>Magnitude</label>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-arrow-down"></i>
+                        <span id="detailDepth">0km</span>
+                        <label>Depth</label>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-globe"></i>
+                        <span id="detailCoords">0,0</span>
+                        <label>Coordinates</label>
+                    </div>
+                </div>
+                <div class="export-section">
+                    <h3 class="export-title">📥 Export Options</h3>
+                    <div class="modal-actions">
+                        <button onclick="exportToPDF()" class="action-btn">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>PDF Report</span>
+                        </button>
+                        <button onclick="exportToExcel()" class="action-btn">
+                            <i class="fas fa-file-excel"></i>
+                            <span>Excel Data</span>
+                        </button>
+                        <button onclick="exportToImage()" class="action-btn">
+                            <i class="fas fa-camera"></i>
+                            <span>Map Image</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- LOGIN/SIGNUP MODAL -->
+    <div id="authModal" class="tectonic-modal" style="z-index: 99999;">
+        <div class="modal-content" style="max-width:400px; text-align:center;">
+            <div class="modal-header">
+                <h2>ACCESS GRID</h2>
+                <button class="close-btn" onclick="document.getElementById('authModal').classList.remove('active')"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="authForms">
+                    <!-- Login Form -->
+                    <div id="loginForm">
+                        <input type="email" id="loginEmail" placeholder="Email Address" class="auth-input">
+                        <input type="password" id="loginPass" placeholder="Password" class="auth-input">
+                        <button onclick="handleLogin()" class="btn primary full-width"
+                            style="margin-top:20px; width:100%">INITIALIZE SESSION</button>
+                        <p style="margin-top:15px; font-size:0.8rem; color:#888;">New Officer? <span
+                                onclick="switchAuthMode('signup')" style="color:var(--magma); cursor:pointer;">Register
+                                Here</span></p>
+                    </div>
+                    <!-- Signup Form -->
+                    <div id="signupForm" style="display:none;">
+                        <input type="text" id="regName" placeholder="Username" class="auth-input">
+                        <input type="email" id="regEmail" placeholder="Email Address" class="auth-input">
+                        <input type="password" id="regPass" placeholder="Password" class="auth-input">
+                        <button onclick="handleSignup()" class="btn primary full-width"
+                            style="margin-top:20px; width:100%">CREATE CREDENTIALS</button>
+                        <p style="margin-top:15px; font-size:0.8rem; color:#888;">Already verified? <span
+                                onclick="switchAuthMode('login')"
+                                style="color:var(--magma); cursor:pointer;">Login</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- I FELT IT FAB -->
+    <button class="i-felt-it-btn" onclick="reportQuake()">
+        <i class="fa-solid fa-house-crack fa-bounce"></i>
+        <span>I FELT IT!</span>
+    </button>
+
+    <!-- EMERGENCY OVERLAY -->
+    <div id="emergencyOverlay"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:999999; flex-direction:column; padding:20px;">
+        <div
+            style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid red; padding-bottom:20px;">
+            <h1 style="color:red; font-family:'Orbitron'; font-size:3rem; animation:blink 1s infinite;">⚠ EMERGENCY MODE
+            </h1>
+            <button class="btn" onclick="toggleEmergencyMode()"
+                style="border-color:#fff; color:#fff;">DEACTIVATE</button>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; flex:1; margin-top:20px;">
+            <!-- Guide -->
+            <div style="background:#111; padding:20px; border:1px solid red;">
+                <h2 style="color:#fff;">IMMEDIATE ACTIONS</h2>
+                <ul style="color:#fff; font-size:1.5rem; line-height:2;">
+                    <li>🛑 **DROP** to the ground</li>
+                    <li>🛡 **COVER** under a sturdy desk</li>
+                    <li>✊ **HOLD ON** until shaking stops</li>
+                    <li>🚫 DO NOT use elevators</li>
+                </ul>
+            </div>
+            <!-- Map Placeholder -->
+            <div style="background:#111; padding:20px; border:1px solid red;">
+                <h2 style="color:#fff;">NEAREST SHELTERS</h2>
+                <div id="emergencyMap"
+                    style="width:100%; height:80%; background:#222; display:flex; justify-content:center; align-items:center;">
+                    [SHELTER MAP ACTIVATED]
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

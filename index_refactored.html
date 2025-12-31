@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>EarthGuard - Global Tectonic Monitor</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="EarthGuard - Professional Seismic Activity Monitor">
+    <meta name="keywords" content="EarthGuard, Earth Observation, Remote Sensing, Climate Change, Disaster Management">
+    <meta name="author" content="Michael Nagy Riad Kamel">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Report Export Libs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Particles -->
+    <div id="particles-js"></div>
+
+    <!-- Stars -->
+    <div class="stars"></div>
+
+    <!-- Meteors -->
+    <div class="meteor fall-down"></div>
+    <div class="meteor fall-left"></div>
+    <div class="meteor fall-right"></div>
+    <div class="meteor diagonal"></div>
+
+    <!-- Fireballs / Floating Orbs -->
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+
+    <!-- Device Notification -->
+    <div class="device-notification">
+        <a class="device-notification--logo" href="#0">
+            <div style="font-size: 2rem; color: #ff3300;"><i class="fas fa-shield-halved"></i></div>
+            <p>EarthGuard</p>
+        </a>
+        <p class="device-notification--message">Earth Sky has so much to offer that we must request you orient your
+            device to portrait or find a larger screen. You won't be disappointed.</p>
+    </div>
+
+    <div class="perspective effect-rotate-left">
+        <div class="container">
+            <div class="outer-nav--return"></div>
+            <div id="viewport" class="l-viewport">
+                <div class="l-wrapper">
+                    <header class="header">
+                        <a class="header--logo" href="#0">
+                            <i class="fa-solid fa-shield-halved"
+                                style="color: #ff3300; font-size: 1.5rem; margin-right: 10px;"></i>
+                            <p>EarthGuard</p>
+                        </a>
+                        <div class="header--nav-toggle">
+                            <span></span>
+                        </div>
+                    </header>
+                    <nav class="l-side-nav">
+                        <ul class="side-nav">
+                            <li class="is-active"><span>Home</span></li>
+                            <li><span>Projects</span></li>
+                            <li><span>About</span></li>
+                            <li><span>Contact</span></li>
+                            <li><span>Join Us</span></li>
+                        </ul>
+                        <!-- Rocket for Navigation -->
+                        <div id="rocket">🚀</div>
+                    </nav>
+
+                    <ul class="l-main-content main-content">
+                        <!-- Home Section -->
+                        <li class="l-section section section--is-active">
+                            <div class="intro">
+                                <div class="intro--banner">
+                                    <h1>EarthGuard Team <i class="fa-solid fa-earth-africa" style="color: #ff3300;"></i>
+                                    </h1>
+                                    <button class="cta">Join Our Mission
+                                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                                            xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                            viewBox="0 0 150 118" style="enable-background:new 0 0 150 118;"
+                                            xml:space="preserve">
+                                            <g transform="translate(0.000000,118.000000) scale(0.100000,-0.100000)">
+                                                <path
+                                                    d="M870,1167c-34-17-55-57-46-90c3-15,81-100,194-211l187-185l-565-1c-431,0-571-3-590-13c-55-28-64-94-18-137c21-20,33-20,597-20h575l-192-193C800,103,794,94,849,39c20-20,39-29,61-29c28,0,63,30,298,262c147,144,272,271,279,282c30,51,23,60-219,304C947,1180,926,1196,870,1167z" />
+                                            </g>
+                                        </svg>
+                                        <span class="btn-background"></span>
+                                    </button>
+                                    <div id="globe-container"></div>
+                                    <img src="Terra_spacecraft_model.png" alt="Earth Observation" style="display:none;">
+                                    <!-- Hidden or positioned elsewhere? kept from original but globe replaces it usually -->
+                                </div>
+                                <div class="intro--options">
+                                    <a href="#0">
+                                        <h3>Climate Monitoring</h3>
+                                        <p>Advanced satellite data analysis for climate change research and
+                                            environmental protection.</p>
+                                    </a>
+                                    <a href="#0">
+                                        <h3>Disaster Management</h3>
+                                        <p>Real-time Earth observation for disaster prediction and management solutions.
+                                        </p>
+                                    </a>
+                                    <a href="#0">
+                                        <h3>Global Collaboration</h3>
+                                        <p>Working with global satellite imagery to solve environmental challenges.</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- Projects Section -->
+                        <li class="l-section section">
+                            <div class="work">
+                                <h2 class="apps-title">Our Applications</h2>
+                                <div class="apps-container">
+                                    <!-- Central Earth Orb -->
+                                    <div class="central-orb">
+                                        <img src="https://t4.ftcdn.net/jpg/05/37/79/63/360_F_537796317_P1aHevXYiL5TQMRw4UrDgX9gVDOmQknp.jpg"
+                                            alt="Earth" class="earth-icon">
+                                    </div>
+
+                                    <!-- Project Items -->
+                                    <div class="project-item" onclick="openProject(0)">
+                                        <div class="icon-circle">
+                                            <img src="img/icons/1 (1).png" alt="California Wildfires"
+                                                class="custom-icon">
+                                        </div>
+                                        <h3 class="project-title">California Wildfires</h3>
+                                    </div>
+
+                                    <div class="project-item" onclick="openProject(1)">
+                                        <div class="icon-circle">
+                                            <img src="img/icons/1 (2).png" alt="Amazon Deforestation"
+                                                class="custom-icon">
+                                        </div>
+                                        <h3 class="project-title">Amazon Deforestation</h3>
+                                    </div>
+
+                                    <div class="project-item" onclick="openProject(2)">
+                                        <div class="icon-circle">
+                                            <img src="img/icons/1 (3).png" alt="European Heat Waves"
+                                                class="custom-icon">
+                                        </div>
+                                        <h3 class="project-title">European Heat Waves</h3>
+                                    </div>
+
+                                    <div class="project-item" onclick="openProject(3)">
+                                        <div class="icon-circle">
+                                            <img src="img/icons/1 (6).png" alt="New Zealand Snow Cover"
+                                                class="custom-icon">
+                                        </div>
+                                        <h3 class="project-title">NZ Snow Cover</h3>
+                                    </div>
+
+                                    <div class="project-item" onclick="openProject(4)">
+                                        <div class="icon-circle">
+                                            <img src="img/icons/1 (7).png" alt="Cairo Black Cloud" class="custom-icon">
+                                        </div>
+                                        <h3 class="project-title">Cairo Black Cloud</h3>
+                                    </div>
+
+                                    <div class="project-item" onclick="openProject(5)">
+                                        <div class="icon-circle">
+                                            <img src="img/icons/1 (4).png" alt="Indian Monsoons" class="custom-icon">
+                                        </div>
+                                        <h3 class="project-title">Indian Monsoons</h3>
+                                    </div>
+
+                                    <div class="project-item" onclick="openProject(6)">
+                                        <div class="icon-circle">
+                                            <img src="img/icons/1 (5).png" alt="Arabian Phytoplankton"
+                                                class="custom-icon">
+                                        </div>
+                                        <h3 class="project-title">Arabian Phytoplankton</h3>
+                                    </div>
+                                </div>
+
+                                <!-- Popup Modal -->
+                                <div class="modal" id="projectModal">
+                                    <div class="modal-content">
+                                        <span class="close" onclick="closeModal()">&times;</span>
+                                        <h2 id="modalTitle"></h2>
+                                        <p id="modalDescription"></p>
+                                        <div class="modal-buttons">
+                                            <button onclick="prevProject()">⬅ Prev</button>
+                                            <button onclick="nextProject()">Next ➡</button>
+                                            <a id="modalLink" href="#" target="_blank">
+                                                <button class="google-btn">🌍 Open in Google Earth Engine</button>
+                                            </a>
+                                            <!-- Export Buttons -->
+                                            <div
+                                                style="margin-top: 10px; display: flex; gap: 10px; justify-content: center;">
+                                                <button onclick="exportToPDF()"
+                                                    style="background: #e63946; color: white;">📄 Report (PDF)</button>
+                                                <button onclick="exportToExcel()"
+                                                    style="background: #2a9d8f; color: white;">📊 Data (Excel)</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- About Section -->
+                        <li class="l-section section">
+                            <div class="about">
+                                <div class="about--banner">
+                                    <span>
+                                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                                            xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                            viewBox="0 0 150 118" style="enable-background:new 0 0 150 118;"
+                                            xml:space="preserve">
+                                            <g transform="translate(0.000000,118.000000) scale(0.100000,-0.100000)">
+                                                <path
+                                                    d="M870,1167c-34-17-55-57-46-90c3-15,81-100,194-211l187-185l-565-1c-431,0-571-3-590-13c-55-28-64-94-18-137c21-20,33-20,597-20h575l-192-193C800,103,794,94,849,39c20-20,39-29,61-29c28,0,63,30,298,262c147,144,272,271,279,282c30,51,23,60-219,304C947,1180,926,1196,870,1167z" />
+                                            </g>
+                                        </svg>
+                                    </span>
+                                </div>
+
+                                <div class="team-section">
+                                    <h2>Our Team Members</h2>
+                                    <div class="team-members">
+                                        <div class="team-member">
+                                            <img src="img/Team/shrif.jpeg" alt="Sherif Mohamed" class="member-avatar">
+                                            <div class="member-name">Sherif Mohamed Kamal</div>
+                                            <div class="member-role">Team Leader & RS Expert</div>
+                                            <div class="member-country">Egypt</div>
+                                            <div class="member-social">
+                                                <a href="mailto:sherif_welcome@yahoo.com">Email</a>
+                                            </div>
+                                        </div>
+                                        <div class="team-member">
+                                            <img src="img/Team/michael.jpg" alt="Michael Nagy" class="member-avatar">
+                                            <div class="member-name">Michael Nagy Riad</div>
+                                            <div class="member-role">Web Development Expert</div>
+                                            <div class="member-country">Egypt</div>
+                                            <div class="member-social">
+                                                <a href="https://web.facebook.com/michaelremotesensing">FB</a>
+                                                <a href="mailto:egiptogroup@gmail.com">Email</a>
+                                                <a href="tel:+201559622658">Phone</a>
+                                            </div>
+                                        </div>
+                                        <div class="team-member">
+                                            <img src="img/Team/rania.jpeg" alt="Rania Hassan" class="member-avatar">
+                                            <div class="member-name">Rania Hassan AlHossainy</div>
+                                            <div class="member-role">AI / ML Expert</div>
+                                            <div class="member-country">Egypt</div>
+                                            <div class="member-social">
+                                                <a href="https://linkedin.com/in/rania-hassan-1a82782a0">LinkedIn</a>
+                                                <a href="mailto:rania81hassan@gmail.com">Email</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- Contact Section -->
+                        <li class="l-section section">
+                            <div class="contact">
+                                <div class="contact--lockup">
+                                    <div class="modal"
+                                        style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; position:static; background:none; height:auto;">
+                                        <div class="contact-map" style="flex: 1; min-width: 200px;">
+                                            <iframe
+                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7275360.126908513!2d25.6628999!3d26.820553!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14368976c35f6b3d%3A0xc1b7e3c6c6d5d48b!2sEgypt!5e0!3m2!1sen!2sus!4v1727960000000!5m2!1sen!2sus"
+                                                width="300" height="250" style="border:0; width: 100%;"
+                                                allowfullscreen="" loading="lazy"></iframe>
+                                        </div>
+                                        <div style="flex: 1; min-width: 300px; text-align: center;">
+                                            <div class="modal--information">
+                                                <p>Egypt</p>
+                                                <a href="mailto:sherif_welcome@yahoo.com">sherif_welcome@yahoo.com</a>
+                                                <a href="tel:+01120855004">+20 112 085 5004</a>
+                                            </div>
+                                            <h2>Contact Us</h2>
+                                            <form class="contact-form" action="mailto:earthskyteam@nasa.gov"
+                                                method="post" enctype="text/plain">
+                                                <label for="name">Name:</label>
+                                                <input type="text" id="name" name="name" required
+                                                    placeholder="Your Name">
+                                                <label for="email">Email:</label>
+                                                <input type="email" id="email" name="email" required
+                                                    placeholder="Your Email">
+                                                <label for="subject">Subject:</label>
+                                                <input type="text" id="subject" name="subject" required
+                                                    placeholder="Subject">
+                                                <label for="message">Message:</label>
+                                                <textarea id="message" name="message" required
+                                                    placeholder="Your Message"></textarea>
+                                                <input type="submit" value="Send Message">
+                                            </form>
+                                            <ul class="modal--options">
+                                                <li><a
+                                                        href="https://www.spaceappschallenge.org/2025/find-a-team/earth-sky/?tab=members">NASA
+                                                        Cairo</a></li>
+                                                <li><a
+                                                        href="https://www.spaceappschallenge.org/2025/find-a-team/earth-sky/">Space
+                                                        Apps</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- Join Us Section -->
+                        <li class="l-section section">
+                            <div class="hire">
+                                <h2>Join Our Earth Mission</h2>
+                                <form class="work-request">
+                                    <!-- Simplified options for brevity, keeping structure -->
+                                    <div class="work-request--options">
+                                        <span class="options-a">
+                                            <input id="opt-1" type="checkbox" value="data analysis">
+                                            <label for="opt-1">Data Analysis</label>
+                                            <input id="opt-2" type="checkbox" value="remote sensing">
+                                            <label for="opt-2">Remote Sensing</label>
+                                            <input id="opt-3" type="checkbox" value="programming">
+                                            <label for="opt-3">Programming</label>
+                                        </span>
+                                        <span class="options-b">
+                                            <input id="opt-4" type="checkbox" value="climate research">
+                                            <label for="opt-4">Climate Research</label>
+                                            <input id="opt-5" type="checkbox" value="gis mapping">
+                                            <label for="opt-5">GIS Mapping</label>
+                                            <input id="opt-6" type="checkbox" value="environmental science">
+                                            <label for="opt-6">Env. Science</label>
+                                        </span>
+                                    </div>
+                                    <div class="work-request--information">
+                                        <div class="information-name">
+                                            <input id="name-join" type="text" spellcheck="false">
+                                            <label for="name-join">Name</label>
+                                        </div>
+                                        <div class="information-email">
+                                            <input id="email-join" type="email" spellcheck="false">
+                                            <label for="email-join">Email</label>
+                                        </div>
+                                    </div>
+                                    <input type="submit" value="Join Mission">
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div id="chatbot-icon">👨‍🚀</div>
+    <div id="chatbot-window">
+        <div id="chatbot-header">
+            <span>MIKI AI Assistant</span>
+            <span id="close-bot">✖</span>
+        </div>
+        <div id="chatbot-messages"></div>
+        <div id="suggested-questions"></div>
+        <div id="chatbot-input-container">
+            <input type="text" id="chatbot-input" placeholder="Ask me something..." />
+            <button id="chatbot-send">Send</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-2.2.4.min.js"><\/script>')</script>
+
+    <script src="https://threejs.org/build/three.js"></script>
+    <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+    <script src="assets/js/functions-min.js"></script>
+
+    <!-- Custom Application Scripts -->
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/globe.js"></script>
+    <script src="assets/js/particles-init.js"></script>
+    <script src="assets/js/chatbot.js"></script>
+    <script src="assets/js/report.js"></script>
+
+</body>
+
+</html>
